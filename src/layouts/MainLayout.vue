@@ -18,9 +18,9 @@
           <q-item
             clickable
             v-ripple
-            to="/encuesta2"
             v-for="(poll, index) in polls"
             :key="index"
+            v-on:click="getQuestions(index + 1)"
           >
             <q-item-section avatar>
               <q-icon name="star" />
@@ -45,7 +45,33 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view> </router-view>
+      <ul id="example-1">
+        <li v-for="(question, index) in questions" :key="index">
+          {{ question.question_text }}
+          <br />
+
+          <input
+            type="radio"
+            :id="index"
+            :value="question.option_one"
+            v-model="question.id"
+          />
+          <label for="uno">{{ question.option_one }}</label>
+          <br />
+          <input
+            type="radio"
+            :id="index + 1"
+            :value="question.option_two"
+            v-model="question.id"
+          />
+          <label for="Dos">{{ question.option_two }}</label>
+          <br />
+          <span>Eligió: {{ question.id }}</span>
+        </li>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </ul>
+
+      <!-- <router-view> </router-view> -->
     </q-page-container>
   </q-layout>
 </template>
@@ -63,7 +89,9 @@ export default {
   },
   data() {
     return {
+      picked: "",
       polls: [],
+      questions: [],
     };
   },
   methods: {
@@ -78,10 +106,26 @@ export default {
           console.log(error);
         });
     },
+    getQuestions(numero) {
+      const path = "http://127.0.0.1:8000/api/polls/questions/";
+      axios
+        .get(path)
+        .then((response) => {
+          const questionst = response.data;
+          this.questions = questionst.filter(
+            (question) => question.poll == numero
+          );
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
   created() {
     this.getPolls();
+    this.getQuestions();
   },
+
   onRowClick(evt, row) {
     console.log("clicked on", evt, row);
   },
