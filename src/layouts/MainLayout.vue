@@ -54,8 +54,10 @@
             type="radio"
             :id="index"
             :value="question.option_one"
-            v-model="question.id"
-          />
+            v-model="test"
+
+                      />
+                      <p>mensaje:{{test}}</p>
           <label for="uno">{{ question.option_one }}</label>
           <br />
           <input
@@ -68,7 +70,53 @@
           <br />
           <span>Eligió: {{ question.id }}</span>
         </li>
-        <button type="submit" class="btn btn-primary">Save changes</button>
+        <li v-for="(question, index) in questionso" :key="index">
+          {{ question.question_text }}
+          <br />
+
+          <input type="text" v-model="question.id" />
+          <br />
+          {{ question.id }}
+        </li>
+        <li v-for="(question, index) in questionsm" :key="index">
+          {{ question.question_text }}
+          <br />
+
+          <input
+            type="checkbox"
+            id="jack"
+            :value="question.option_one"
+            v-model="checkedNames"
+          />
+          <label for="jack">{{ question.option_one }}</label>
+          <br />
+          <input
+            type="checkbox"
+            id="john"
+            :value="question.option_two"
+            v-model="checkedNames"
+          />
+          <label for="john">{{ question.option_two }}</label>
+          <br />
+          <input
+            type="checkbox"
+            id="mike"
+            :value="question.option_three"
+            v-model="checkedNames"
+          />
+          <label for="mike">{{ question.option_three }}</label>
+          <br />
+          <span>Checked names: {{ checkedNames }}</span>
+          <br />
+        </li>
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+          v-on:click="postChoices()"
+        >
+          Save changes
+        </button>
       </ul>
 
       <!-- <router-view> </router-view> -->
@@ -89,9 +137,14 @@ export default {
   },
   data() {
     return {
+      test:"",
+      checkedNames: [],
       picked: "",
       polls: [],
       questions: [],
+      questionsm: [],
+      questionso: [],
+      answers: [],
     };
   },
   methods: {
@@ -113,17 +166,39 @@ export default {
         .then((response) => {
           const questionst = response.data;
           this.questions = questionst.filter(
-            (question) => question.poll == numero
+            (question) =>
+              (question.poll == numero) & (question.type == "unique")
+          );
+          this.questionsm = questionst.filter(
+            (question) =>
+              (question.poll == numero) & (question.type == "multiple")
+          );
+          this.questionso = questionst.filter(
+            (question) => (question.poll == numero) & (question.type == "open")
           );
         })
         .catch((error) => {
           console.log(error);
         });
     },
+    postChoices() {
+      let post = {
+        poll: 1,
+        choice_q1: "bar",
+        choice_q2: "r",
+      };
+      console.log("testing",this.test);
+      // axios
+      //   .post("http://127.0.0.1:8000/api/polls/choice/", post)
+      //   .then((result) => {
+      //     console.log(result);
+      //   });
+    },
   },
   created() {
     this.getPolls();
     this.getQuestions();
+    this.postChoices();
   },
 
   onRowClick(evt, row) {
