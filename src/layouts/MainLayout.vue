@@ -54,17 +54,15 @@
             type="radio"
             :id="index"
             :value="question.option_one"
-            v-model="test"
-
-                      />
-                      <p>mensaje:{{test}}</p>
+            v-model="responses1[index]"
+          />
           <label for="uno">{{ question.option_one }}</label>
           <br />
           <input
             type="radio"
             :id="index + 1"
             :value="question.option_two"
-            v-model="question.id"
+            v-model="responses1[index]"
           />
           <label for="Dos">{{ question.option_two }}</label>
           <br />
@@ -74,7 +72,7 @@
           {{ question.question_text }}
           <br />
 
-          <input type="text" v-model="question.id" />
+          <input type="text" v-model="responses2[index]" />
           <br />
           {{ question.id }}
         </li>
@@ -137,7 +135,11 @@ export default {
   },
   data() {
     return {
-      test:"",
+     
+      responses1:[],
+      responses2:[],
+      responses3:[],
+      responses4:[],
       checkedNames: [],
       picked: "",
       polls: [],
@@ -184,15 +186,17 @@ export default {
     postChoices() {
       let post = {
         poll: 1,
-        choice_q1: "bar",
-        choice_q2: "r",
+        choice_q1: this.responses1[0],
+        choice_q2: this.responses1[1],
+        choice_q3: this.responses2[0],
+        choice_q4: this.responses2[1],
+        choice_q5: this.checkedNames[0]+","+this.checkedNames[1],
       };
-      console.log("testing",this.test);
-      // axios
-      //   .post("http://127.0.0.1:8000/api/polls/choice/", post)
-      //   .then((result) => {
-      //     console.log(result);
-      //   });
+      axios
+        .post("http://127.0.0.1:8000/api/polls/choice/", post)
+        .then((result) => {
+          console.log(result);
+        });
     },
   },
   created() {
