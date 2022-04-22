@@ -46,75 +46,90 @@
 
     <q-page-container>
       <ul id="example-1">
-        <li v-for="(question, index) in questions" :key="index">
-          {{ question.question_text }}
-          <br />
+        <q-toolbar class="bg-purple text-white shadow-2 rounded-borders">
+          <q-btn flat label="Encuesta" />
+        </q-toolbar>
+        <div class="div-1">
+          <li v-for="(question, index) in questions" :key="index">
+            <h6>{{ question.question_text }}</h6>
 
-          <input
-            type="radio"
-            :id="index"
-            :value="question.option_one"
-            v-model="responses1[index]"
-          />
-          <label for="uno">{{ question.option_one }}</label>
-          <br />
-          <input
-            type="radio"
-            :id="index + 1"
-            :value="question.option_two"
-            v-model="responses1[index]"
-          />
-          <label for="Dos">{{ question.option_two }}</label>
-          <br />
-          <span>Eligió: {{ question.id }}</span>
-        </li>
-        <li v-for="(question, index) in questionso" :key="index">
-          {{ question.question_text }}
-          <br />
+            <label class="form-control">
+              <input
+                type="radio"
+                class="free-label four col"
+                :id="index"
+                :value="question.option_one"
+                v-model="responses1[index]"
+              />
+              {{ question.option_one }}</label
+            >
+            <br />
+            <label class="form-control">
+              <input
+                type="radio"
+                class="free-label four col"
+                :id="index + 1"
+                :value="question.option_two"
+                v-model="responses1[index]"
+              />
+              {{ question.option_two }}</label
+            >
+            <br />
+          </li>
+          <li v-for="(question, index) in questionso" :key="index">
+            <h6>{{ question.question_text }}</h6>
 
-          <input type="text" v-model="responses2[index]" />
-          <br />
-          {{ question.id }}
-        </li>
-        <li v-for="(question, index) in questionsm" :key="index">
-          {{ question.question_text }}
-          <br />
+            <input type="text" v-model="responses2[index]" />
+            <br />
+          </li>
+          <li v-for="(question, index) in questionsm" :key="index">
+            <h6>{{ question.question_text }}</h6>
+            <label class="form-control">
+              <input
+                type="checkbox"
+                class="option-input checkbox"
+                id="jack"
+                :value="question.option_one"
+                v-model="checkedNames"
+              />
+              {{ question.option_one }}</label
+            >
+            <br />
+            <label class="form-control">
+              <input
+                type="checkbox"
+                class="option-input checkbox"
+                id="john"
+                :value="question.option_two"
+                v-model="checkedNames"
+              />
+              {{ question.option_two }}</label
+            >
+            <br />
+            <label class="form-control">
+              <input
+                type="checkbox"
+                class="option-input checkbox"
+                id="mike"
+                :value="question.option_three"
+                v-model="checkedNames"
+              />
+              {{ question.option_three }}</label
+            >
+            <br />
 
-          <input
-            type="checkbox"
-            id="jack"
-            :value="question.option_one"
-            v-model="checkedNames"
-          />
-          <label for="jack">{{ question.option_one }}</label>
-          <br />
-          <input
-            type="checkbox"
-            id="john"
-            :value="question.option_two"
-            v-model="checkedNames"
-          />
-          <label for="john">{{ question.option_two }}</label>
-          <br />
-          <input
-            type="checkbox"
-            id="mike"
-            :value="question.option_three"
-            v-model="checkedNames"
-          />
-          <label for="mike">{{ question.option_three }}</label>
-          <br />
-          <span>Checked names: {{ checkedNames }}</span>
-          <br />
-        </li>
+            <br />
+          </li>
 
-        <button
-          type="submit"
-          class="btn btn-primary"
-          v-on:click="postChoices()"
-        >
-          Save changes
-        </button>
+          <q-btn
+            color="amber"
+            glossy
+            label="Guardar"
+            type="submit"
+            class="btn btn-primary"
+            v-on:click="postChoices()"
+          />
+        </div>
       </ul>
 
       <!-- <router-view> </router-view> -->
@@ -135,11 +150,11 @@ export default {
   },
   data() {
     return {
-     
-      responses1:[],
-      responses2:[],
-      responses3:[],
-      responses4:[],
+      numeroe: 0,
+      responses1: [],
+      responses2: [],
+      responses3: [],
+      responses4: [],
       checkedNames: [],
       picked: "",
       polls: [],
@@ -162,6 +177,8 @@ export default {
         });
     },
     getQuestions(numero) {
+      console.log("resultado", numero);
+      this.numeroe = numero;
       const path = "http://127.0.0.1:8000/api/polls/questions/";
       axios
         .get(path)
@@ -185,12 +202,17 @@ export default {
     },
     postChoices() {
       let post = {
-        poll: 1,
+        poll: this.numeroe,
         choice_q1: this.responses1[0],
         choice_q2: this.responses1[1],
         choice_q3: this.responses2[0],
         choice_q4: this.responses2[1],
-        choice_q5: this.checkedNames[0]+","+this.checkedNames[1],
+        choice_q5:
+          this.checkedNames[0] +
+          "," +
+          this.checkedNames[1] +
+          "," +
+          this.checkedNames[2],
       };
       axios
         .post("http://127.0.0.1:8000/api/polls/choice/", post)
@@ -210,3 +232,148 @@ export default {
   },
 };
 </script>
+<style>
+.div-1 {
+  background-color: #ebebeb;
+  margin: 5%;
+  padding: 5% 5%;
+}
+input {
+  width: 100%;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  color: #333;
+  background-color: #eee;
+}
+
+:root {
+  --form-control-color: rebeccapurple;
+}
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+form {
+  display: grid;
+  place-content: center;
+  min-height: 100vh;
+}
+
+.form-control {
+  font-family: system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1.1;
+  display: grid;
+  grid-template-columns: 1em auto;
+  gap: 0.5em;
+}
+
+.form-control + .form-control {
+  margin-top: 1em;
+}
+
+.form-control:focus-within {
+  color: var(--form-control-color);
+}
+
+input[type="radio"] {
+  /* Add if not using autoprefixer */
+  -webkit-appearance: none;
+  /* Remove most all native input styles */
+  appearance: none;
+  /* For iOS < 15 */
+  background-color: var(--form-background);
+  /* Not removed via appearance */
+  margin: 0;
+
+  font: inherit;
+  color: currentColor;
+  width: 1.15em;
+  height: 1.15em;
+  border: 0.15em solid currentColor;
+  border-radius: 50%;
+  transform: translateY(-0.075em);
+
+  display: grid;
+  place-content: center;
+}
+
+input[type="checkbox"] {
+  /* Add if not using autoprefixer */
+  -webkit-appearance: none;
+  /* Remove most all native input styles */
+  appearance: none;
+  /* For iOS < 15 */
+  background-color: var(--form-background);
+  /* Not removed via appearance */
+  margin: 0;
+
+  font: inherit;
+  color: currentColor;
+  width: 1.15em;
+  height: 1.15em;
+  border: 0.15em solid currentColor;
+
+  transform: translateY(-0.075em);
+
+  display: grid;
+  place-content: center;
+}
+input[type="radio"]::before {
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em var(--form-control-color);
+  /* Windows High Contrast Mode */
+  background-color: CanvasText;
+}
+
+input[type="checkbox"]::before {
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em var(--form-control-color);
+  /* Windows High Contrast Mode */
+  background-color: CanvasText;
+}
+input[type="radio"]:checked::before {
+  transform: scale(1);
+}
+
+input[type="radio"]:focus {
+  outline: max(2px, 0.15em) solid currentColor;
+  outline-offset: max(2px, 0.15em);
+}
+input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
+input[type="ckeckbox"]:focus {
+  outline: max(2px, 0.15em) solid currentColor;
+  outline-offset: max(2px, 0.15em);
+}
+</style>
